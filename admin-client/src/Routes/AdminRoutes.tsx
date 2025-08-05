@@ -11,17 +11,22 @@ const AdminRoutes = () => {
   const { logged } = useAuth();
 
   return (
-    <Routes>
-      <Route path="*" element={<Navigate to={logged ? "/home" : "/login"} />} />
-      <Route path="/login" element={!logged ? <Login /> : <Navigate to="/home" />} />
-       <Route path="/" element={<Layout />}>
-           <Route path="/home" element={logged ? <Home /> : <Navigate to="/login" />} />
-            <Route path="/kitchen" element={<Kitchen/>}/>
-            <Route path="/bedroom" element={<Bedroom/>}/>
-            <Route path="/livingRoom" element={<LivingRoom/>}/>
-    </Route>
-    </Routes>
-  );
+   <Routes>
+  {/* Public Route: Login */}
+  <Route path="/login" element={!logged ? <Login /> : <Navigate to="/home" />} />
+
+  {/* Protected Routes */}
+  <Route path="/" element={logged ? <Layout /> : <Navigate to="/login" />}>
+    <Route path="home" element={<Home />} />
+    <Route path="kitchen" element={<Kitchen />} />
+    <Route path="bedroom" element={<Bedroom />} />
+    <Route path="livingRoom" element={<LivingRoom />} />
+  </Route>
+
+  {/* Catch-all: Redirect to login or home */}
+  <Route path="*" element={<Navigate to={logged ? "/home" : "/login"} />} />
+</Routes>
+  )
 };
 
 export default AdminRoutes;
