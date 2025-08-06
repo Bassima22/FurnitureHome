@@ -4,7 +4,7 @@ type Item={
     price:number;
     imgURL:string;
 }
-const ItemTable = ({ items }: { items: Item[] }) => {
+const ItemTable = ({ items , onDelete}: { items: Item[] , onDelete:(id:string)=>void}) => {
   return (
     <table className="w-full mb-4 border text-sm">
       <thead>
@@ -15,7 +15,7 @@ const ItemTable = ({ items }: { items: Item[] }) => {
           <th className="p-2">Image</th>
           <th className="p-2">Actions</th>
         </tr>
-      </thead>
+      </thead>  
       <tbody>
         {items.map((item) => (
           <tr key={item._id} className="border-t">
@@ -31,7 +31,7 @@ const ItemTable = ({ items }: { items: Item[] }) => {
             </td>
             <td className="p-2">
               <button className="text-blue-500 hover:underline mr-2">Edit</button>
-              <button className="text-red-500 hover:underline">Delete</button>
+              <button className="text-red-500 hover:underline" onClick={() => onDelete(item._id)}>Delete</button>
             </td>
           </tr>
         ))}
