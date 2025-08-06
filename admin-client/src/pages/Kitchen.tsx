@@ -1,9 +1,10 @@
-import Topbar from '../components/topbar';
-import Section from '../components/section';
-import ItemTable from '../components/ItemTable';
-import AddItemButton from '../components/AddItemButton';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import Topbar from "../components/topbar";
+import Section from "../components/section";
+import ItemTable from "../components/ItemTable";
+import AddItemButton from "../components/AddItemButton";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Loader from "../components/icons/loader";
 type Item = {
   _id: string;
   title: string;
@@ -15,40 +16,76 @@ type Item = {
 const Kitchen = () => {
   const [galleryItems, setGalleryItems] = useState<Item[]>([]);
   const [unitItems, setUnitItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState<number>(0);
+  
+
+  function getAndSetKitchenGalleryData() {
+    setLoading((prev) => prev + 1);
+    axios
+      .get("http://localhost:5050/items/kitchen/gallery")
+      .then((res) => setGalleryItems(res.data))
+      .catch((err) => console.error("Failed to load gallery items:", err))
+      .finally(() => setLoading((prev) => prev - 1));
+  }
+
+  function getAndSetKitchenItemsData() {
+    setLoading((prev) => prev + 1);
+    axios
+      .get("http://localhost:5050/items/kitchen/item")
+      .then((res) => setUnitItems(res.data))
+      .catch((err) => console.error("Failed to load unit items:", err))
+      .finally(() => setLoading((prev) => prev - 1));
+  }
 
   useEffect(() => {
-  axios.get('http://localhost:5050/items/kitchen/gallery')
-    .then(res => setGalleryItems(res.data))
-    .catch(err => console.error("Failed to load gallery items:", err));
+    getAndSetKitchenGalleryData();
+    getAndSetKitchenItemsData();
+  }, []);
 
-  axios.get('http://localhost:5050/items/kitchen/item')
-    .then(res => setUnitItems(res.data))
-    .catch(err => console.error("Failed to load unit items:", err));
-}, []);
+  const handleDeleteUnit = (id: string) => {
+    axios
+      .delete(`http://localhost:5050/items/${id}`)
+      .then(() => {
+        console.log("delete item");
+        getAndSetKitchenItemsData();
+      })
+      .catch((err) => console.error("Failed to delete item:", err));
+  };
 
-const handleDeleteUnit = (id: string) => {
-  axios.delete(`http://localhost:5050/items/${id}`)
-    .then(() => {
-      setUnitItems((prevItems) => prevItems.filter(item => item._id !== id));
-    })
-    .catch(err => console.error("Failed to delete item:", err));
-};
+  const handleDeleteGallery = (id: string) => {
+    axios
+      .delete(`http://localhost:5050/items/${id}`)
+      .then(() => {
+        console.log("delete item");
+        getAndSetKitchenGalleryData();
+    
+      })
+      .catch((err) => console.error("Failed to delete item:", err));
+  };
 
-  const handleAddGalleryItem = () => alert('Add gallery item clicked');
-  const handleAddUnitItem = () => alert('Add unit item clicked');
+  const handleAddGalleryItem = () => alert("Add gallery item clicked");
+  const handleAddUnitItem = () => alert("Add unit item clicked");
 
   return (
-    <div className="p-4">
+    <div className="p-4 relative">
+      {!!loading && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 bg-gray-400 opacity-20"></div>
+          <div className="z-10">
+            <Loader />
+          </div>
+        </div>
+      )}
       <Topbar text="Kitchens' Data" />
-      
-      <div className="flex gap-4">
+
+      <div className="flex flex-col gap-4">
         <Section title="Gallery">
-          <ItemTable items={galleryItems} onDelete={handleDeleteUnit} />
+          <ItemTable items={galleryItems} onDelete={handleDeleteGallery} />
           <AddItemButton onClick={handleAddGalleryItem} />
         </Section>
 
         <Section title="Items">
-          <ItemTable items={unitItems}  onDelete={handleDeleteUnit}/>
+          <ItemTable items={unitItems} onDelete={handleDeleteUnit} />
           <AddItemButton onClick={handleAddUnitItem} />
         </Section>
       </div>

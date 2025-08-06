@@ -10,17 +10,18 @@ async function itemsCollection() {
 }
 
 itemsRouter.get("/", async (req, res) => {
-    const collection = await itemsCollection();
-    const items = await collection.find().toArray();
-    res.json(items);
+  const collection = await itemsCollection();
+  const items = await collection.find().toArray();
+  res.json(items);
 });
 
 itemsRouter.post("/", async (req, res) => {
-    const item = req.body;
-    const collection = await itemsCollection();
-    collection.insertOne(item);
-    res.sendStatus(200);
-})
+  const item = req.body;
+  const collection = await itemsCollection();
+  collection.insertOne(item);
+  res.sendStatus(200);
+});
+
 itemsRouter.delete("/:id",async(req,res)=>
 {
     const collection=await itemsCollection();
@@ -30,11 +31,13 @@ itemsRouter.delete("/:id",async(req,res)=>
 
 itemsRouter.get("/:room/:section", async (req, res) => {
   const collection = await itemsCollection();
-  const items = await collection.find({
-    room: req.params.room,
-    section: req.params.section,
-  }).toArray();
+  const items = await collection
+    .find({
+      room: req.params.room,
+      section: req.params.section,
+    })
+    .toArray();
   res.json(items);
 });
 
-export {itemsRouter};
+export { itemsRouter };

@@ -1,21 +1,28 @@
-type Item={
-    _id:string;
-    title:string;
-    price:number;
-    imgURL:string;
-}
-const ItemTable = ({ items , onDelete}: { items: Item[] , onDelete:(id:string)=>void}) => {
+import { FaTrash, FaEdit } from "react-icons/fa";
+type Item = {
+  _id: string;
+  title: string;
+  price: number;
+  imgURL: string;
+};
+const ItemTable = ({
+  items,
+  onDelete,
+}: {
+  items: Item[];
+  onDelete: (id: string) => void;
+}) => {
   return (
     <table className="w-full mb-4 border text-sm">
       <thead>
-        <tr className="bg-gray-200 text-left">
+        <tr className=" text-left">
           <th className="p-2">ID</th>
           <th className="p-2">Title</th>
           <th className="p-2">Price</th>
           <th className="p-2">Image</th>
           <th className="p-2">Actions</th>
         </tr>
-      </thead>  
+      </thead>
       <tbody>
         {items.map((item) => (
           <tr key={item._id} className="border-t">
@@ -30,8 +37,21 @@ const ItemTable = ({ items , onDelete}: { items: Item[] , onDelete:(id:string)=>
               />
             </td>
             <td className="p-2">
-              <button className="text-blue-500 hover:underline mr-2">Edit</button>
-              <button className="text-red-500 hover:underline" onClick={() => onDelete(item._id)}>Delete</button>
+              <button title="edit" className="mr-2 ml-1">
+                <FaEdit size={16} color="grey" />
+              </button>
+              <button
+                onClick={() => {
+                  if (
+                    window.confirm("Are you sure you want to delete this item?")
+                  ) {
+                    onDelete(item._id);
+                  }
+                }}
+                title="Delete"
+              >
+                <FaTrash size={16} color="black" />
+              </button>
             </td>
           </tr>
         ))}

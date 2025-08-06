@@ -24,10 +24,12 @@ itemsRouter.delete("/:id", async (req, res) => {
 });
 itemsRouter.get("/:room/:section", async (req, res) => {
     const collection = await itemsCollection();
-    const items = await collection.find({
+    const items = await collection
+        .find({
         room: req.params.room,
         section: req.params.section,
-    }).toArray();
+    })
+        .toArray();
     res.json(items);
 });
 export { itemsRouter };
