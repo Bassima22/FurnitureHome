@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 
-const Sidebar = () => {
+const Sidebar = ({ className = "" }: { className?: string }) => {
   return (
-    <div className="w-64 h-screen bg-gray-800 text-white p-4">
+    <div className={`p-4 ${className}`}>
       <h2 className="text-xl font-bold mb-6">Admin Panel</h2>
       <nav className="flex flex-col gap-4">
         <Link to="/home" className="hover:underline">Home</Link>

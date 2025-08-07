@@ -5,6 +5,8 @@ import AddItemButton from "../components/AddItemButton";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Loader from "../components/icons/loader";
+import Modal from "../components/Modal";
+import AddItemForm from "../components/AddItemForm";
 type Item = {
   _id: string;
   title: string;
@@ -17,7 +19,8 @@ const Kitchen = () => {
   const [galleryItems, setGalleryItems] = useState<Item[]>([]);
   const [unitItems, setUnitItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState<number>(0);
-  
+  const [showAddGalleryModal, setShowAddGalleryModal] = useState(false);
+  const [showAddItemModal, setShowAddItemModal] = useState(false);
 
   function getAndSetKitchenGalleryData() {
     setLoading((prev) => prev + 1);
@@ -58,13 +61,12 @@ const Kitchen = () => {
       .then(() => {
         console.log("delete item");
         getAndSetKitchenGalleryData();
-    
       })
       .catch((err) => console.error("Failed to delete item:", err));
   };
 
-  const handleAddGalleryItem = () => alert("Add gallery item clicked");
-  const handleAddUnitItem = () => alert("Add unit item clicked");
+  const handleAddGalleryItem = () => setShowAddGalleryModal(true);
+  const handleAddUnitItem = () => setShowAddItemModal(true);
 
   return (
     <div className="p-4 relative">
@@ -77,18 +79,59 @@ const Kitchen = () => {
         </div>
       )}
       <Topbar text="Kitchens' Data" />
+      <div className="text-right mb-2">
+        <a
+          href="#items-section"
+          className="text-sm text-blue-600 hover:underline"
+        >
+          Go to Items ↓
+        </a>
+      </div>
 
       <div className="flex flex-col gap-4">
         <Section title="Gallery">
           <ItemTable items={galleryItems} onDelete={handleDeleteGallery} />
           <AddItemButton onClick={handleAddGalleryItem} />
         </Section>
-
-        <Section title="Items">
-          <ItemTable items={unitItems} onDelete={handleDeleteUnit} />
-          <AddItemButton onClick={handleAddUnitItem} />
-        </Section>
+        <div id="items-section">
+          <Section title="Items">
+            <ItemTable items={unitItems} onDelete={handleDeleteUnit} />
+            <AddItemButton onClick={handleAddUnitItem} />
+          </Section>
+        </div>
       </div>
+
+      {showAddGalleryModal && (
+        <Modal onClose={() => setShowAddGalleryModal(false)}>
+          <h2 className="text-lg font-semibold mb-4">Add Gallery Item</h2>
+          <AddItemForm
+            room="kitchen"
+            section="gallery"
+            onSuccess={() => {
+              setShowAddGalleryModal(false);
+              getAndSetKitchenGalleryData();
+              window.location.reload();
+            }}
+          />
+        </Modal>
+      )}
+
+
+
+      {showAddItemModal && (
+        <Modal onClose={() => setShowAddItemModal(false)}>
+          <h2 className="text-lg font-semibold mb-4">Add Item</h2>
+          <AddItemForm
+            room="kitchen"
+            section="item"
+            onSuccess={() => {
+              setShowAddItemModal(false);
+              getAndSetKitchenItemsData();
+              window.location.reload();
+            }}
+            />
+            </Modal>
+      )}
     </div>
   );
 };
