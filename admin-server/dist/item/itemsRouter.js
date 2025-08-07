@@ -11,6 +11,13 @@ itemsRouter.get("/", async (req, res) => {
     const items = await collection.find().toArray();
     res.json(items);
 });
+itemsRouter.put("/:id", async (req, res) => {
+    const { id } = req.params;
+    const updatedItem = req.body;
+    const collection = await itemsCollection();
+    await collection.updateOne({ _id: new ObjectId(id) }, { $set: updatedItem });
+    res.sendStatus(200);
+});
 itemsRouter.post("/", async (req, res) => {
     const item = req.body;
     const collection = await itemsCollection();

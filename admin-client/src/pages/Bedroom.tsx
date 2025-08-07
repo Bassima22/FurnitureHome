@@ -5,6 +5,8 @@ import AddItemButton from "../components/AddItemButton";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Loader from "../components/icons/loader";
+import Modal from "../components/Modal";
+import AddItemForm from "../components/AddItemForm";
 type Item = {
   _id: string;
   title: string;
@@ -17,6 +19,9 @@ const Bedroom = () => {
   const [galleryItems, setGalleryItems] = useState<Item[]>([]);
   const [unitItems, setUnitItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState<number>(0);
+  const [showAddGalleryModal, setShowAddGalleryModal] = useState(false);
+  const [showAddItemModal, setShowAddItemModal] = useState(false);
+  const [editingItem, setEditingItem] = useState<Item | null>(null);
 
   function getAndSetBedroomGalleryData() {
     setLoading((prev) => prev + 1);
@@ -61,8 +66,8 @@ const Bedroom = () => {
       .catch((err) => console.error("Failed to delete item:", err));
   };
 
-  const handleAddGalleryItem = () => alert("Add gallery item clicked");
-  const handleAddUnitItem = () => alert("Add unit item clicked");
+  const handleAddGalleryItem = () => setShowAddGalleryModal(true);
+  const handleAddUnitItem = () => setShowAddItemModal(true);
 
   return (
     <div className="p-4 relative">
@@ -75,18 +80,79 @@ const Bedroom = () => {
         </div>
       )}
       <Topbar text="Bedrooms' Data" />
+      
 
       <div className="flex flex-col gap-4">
+        <div className="h-[45%]">
         <Section title="Gallery">
-          <ItemTable items={galleryItems} onDelete={handleDeleteGallery} />
+          <ItemTable
+            items={galleryItems}
+            onDelete={handleDeleteGallery}
+            onEdit={(item) => setEditingItem(item)}
+          />
           <AddItemButton onClick={handleAddGalleryItem} />
         </Section>
-
-        <Section title="Items">
-          <ItemTable items={unitItems} onDelete={handleDeleteUnit} />
-          <AddItemButton onClick={handleAddUnitItem} />
-        </Section>
+        </div>
+        <div className="h-[45%]">
+          <Section title="Items">
+            <ItemTable
+              items={unitItems}
+              onDelete={handleDeleteUnit}
+              onEdit={(item) => setEditingItem(item)}
+            />
+            <AddItemButton onClick={handleAddUnitItem} />
+          </Section>
+        </div>
       </div>
+
+      {showAddGalleryModal && (
+        <Modal onClose={() => setShowAddGalleryModal(false)}>
+          <h2 className="text-lg font-semibold mb-4">Add Gallery Item</h2>
+          <AddItemForm
+            room="livingroom"
+            section="gallery"
+            onSuccess={() => {
+              setShowAddGalleryModal(false);
+              getAndSetBedroomGalleryData();
+              window.location.reload();
+            }}
+          />
+        </Modal>
+      )}
+
+      {showAddItemModal && (
+        <Modal onClose={() => setShowAddItemModal(false)}>
+          <h2 className="text-lg font-semibold mb-4">Add Item</h2>
+          <AddItemForm
+            room="livingroom"
+            section="item"
+            onSuccess={() => {
+              setShowAddItemModal(false);
+              getAndSetBedroomItemsData();
+              window.location.reload();
+            }}
+          />
+        </Modal>
+      )}
+
+      {editingItem && (
+        <Modal onClose={() => setEditingItem(null)}>
+          <h2 className="text-lg font-semibold mb-4">Edit Item</h2>
+          <AddItemForm
+            item={editingItem}
+            room={editingItem.room}
+            section={editingItem.section}
+            onSuccess={() => {
+              setEditingItem(null);
+              if (editingItem.section === "gallery") {
+                getAndSetBedroomGalleryData();
+              } else {
+                getAndSetBedroomItemsData();
+              }
+            }}
+          />
+        </Modal>
+      )}
     </div>
   );
 };

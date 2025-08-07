@@ -1,20 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 const AddItemForm = ({
   room,
   section,
   onSuccess,
+  item,
 }: {
   room: string;
   section: string;
   onSuccess: () => void;
+  item?: {
+    _id?: string;
+    title: string;
+    price: number;
+    imgURL: string;
+  };
 }) => {
   const [form, setForm] = useState({
     title: "",
     price: "",
     imgURL: "",
   });
+
+  useEffect(() => {
+    if (item) {
+      setForm({
+        title: item.title || "",
+        price: item.price.toString() || "",
+        imgURL: item.imgURL || "",
+      });
+    }
+  }, [item]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -29,19 +46,27 @@ const AddItemForm = ({
       return;
     }
 
-    const item = {
-      ...form,
+    const itemToSend = {
+      title: form.title,
       price: priceAsNumber,
+      imgURL: form.imgURL,
       room,
       section,
     };
 
     try {
-      await axios.post("http://localhost:5050/items", item);
+      if (item?._id) {
+       
+        await axios.put(`http://localhost:5050/items/${item._id}`, itemToSend);
+      } else {
+        
+        await axios.post("http://localhost:5050/items", itemToSend);
+      }
+
       onSuccess();
     } catch (err) {
-      console.error("Error adding item", err);
-      alert("Failed to add item.");
+      console.error("Error saving item", err);
+      alert("Failed to save item.");
     }
   };
 
@@ -72,7 +97,7 @@ const AddItemForm = ({
         type="submit"
         className="w-full bg-green-500 text-white py-2 rounded"
       >
-        Add Item
+        {item ? "Update Item" : "Add Item"}
       </button>
     </form>
   );

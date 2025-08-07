@@ -21,6 +21,7 @@ const Kitchen = () => {
   const [loading, setLoading] = useState<number>(0);
   const [showAddGalleryModal, setShowAddGalleryModal] = useState(false);
   const [showAddItemModal, setShowAddItemModal] = useState(false);
+  const [editingItem, setEditingItem] = useState<Item | null>(null);
 
   function getAndSetKitchenGalleryData() {
     setLoading((prev) => prev + 1);
@@ -79,23 +80,26 @@ const Kitchen = () => {
         </div>
       )}
       <Topbar text="Kitchens' Data" />
-      <div className="text-right mb-2">
-        <a
-          href="#items-section"
-          className="text-sm text-blue-600 hover:underline"
-        >
-          Go to Items ↓
-        </a>
-      </div>
+      
 
       <div className="flex flex-col gap-4">
+        <div className="h-[45%]">
         <Section title="Gallery">
-          <ItemTable items={galleryItems} onDelete={handleDeleteGallery} />
+          <ItemTable
+            items={galleryItems}
+            onDelete={handleDeleteGallery}
+            onEdit={(item) => setEditingItem(item)}
+          />
           <AddItemButton onClick={handleAddGalleryItem} />
         </Section>
-        <div id="items-section">
+        </div>
+        <div className="h-[45%]">
           <Section title="Items">
-            <ItemTable items={unitItems} onDelete={handleDeleteUnit} />
+            <ItemTable
+              items={unitItems}
+              onDelete={handleDeleteUnit}
+              onEdit={(item) => setEditingItem(item)}
+            />
             <AddItemButton onClick={handleAddUnitItem} />
           </Section>
         </div>
@@ -116,8 +120,6 @@ const Kitchen = () => {
         </Modal>
       )}
 
-
-
       {showAddItemModal && (
         <Modal onClose={() => setShowAddItemModal(false)}>
           <h2 className="text-lg font-semibold mb-4">Add Item</h2>
@@ -129,8 +131,27 @@ const Kitchen = () => {
               getAndSetKitchenItemsData();
               window.location.reload();
             }}
-            />
-            </Modal>
+          />
+        </Modal>
+      )}
+
+      {editingItem && (
+        <Modal onClose={() => setEditingItem(null)}>
+          <h2 className="text-lg font-semibold mb-4">Edit Item</h2>
+          <AddItemForm
+            item={editingItem}
+            room={editingItem.room}
+            section={editingItem.section}
+            onSuccess={() => {
+              setEditingItem(null);
+              if (editingItem.section === "gallery") {
+                getAndSetKitchenGalleryData();
+              } else {
+                getAndSetKitchenItemsData();
+              }
+            }}
+          />
+        </Modal>
       )}
     </div>
   );
