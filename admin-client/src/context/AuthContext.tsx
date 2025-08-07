@@ -10,12 +10,17 @@ import {
 type AuthContextType = {
   logged: boolean;
   setLogged: (val: boolean) => void;
+  logout: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loggedIn, setLoggedIn] = useState(Boolean(localStorage.getItem("furniture_app_logged_in")));
+  const logout = useCallback(() => {
+  setLoggedIn(false);
+  localStorage.removeItem("furniture_app_logged_in");
+}, []);
   const setLogged = useCallback(
     (logged: boolean) => {
       setLoggedIn(logged);
@@ -24,9 +29,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     [setLoggedIn]
   );
   const value = useMemo(
-    () => ({ logged: loggedIn, setLogged }),
-    [loggedIn, setLogged]
-  );
+  () => ({ logged: loggedIn, setLogged, logout }),
+  [loggedIn, setLogged, logout]
+);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
