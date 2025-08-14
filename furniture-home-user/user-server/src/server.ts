@@ -2,8 +2,9 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-import { connectDb } from "./db/connection.js"; // keep .js for NodeNext/ESM builds
+import { connectDb } from "./db/connection.js"; 
 import { makeItemsRouter } from "./item/itemRouter.js";
+import makeContactsRouter from "./item/contactRouter.js";
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ async function run() {
   });
 
   app.use("/api/items", makeItemsRouter(db));
+  app.use("/contacts", makeContactsRouter(db));
 
   app.listen(PORT, () => {
     console.log(`✅ API running on http://localhost:${PORT}`);

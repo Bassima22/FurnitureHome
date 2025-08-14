@@ -14,7 +14,6 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
 
-      {/* HERO */}
       <section className="relative h-[42vh] md:h-[54vh] bg-[url('/hero.jpg')] bg-cover bg-center">
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-transparent" />
         <div className="relative h-full max-w-7xl mx-auto px-4 flex items-center justify-center">
@@ -24,9 +23,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* EVERYTHING BELOW THE HERO */}
+      
       <div className="relative flex-1 bg-[url('/about.jpg')] bg-cover bg-center bg-no-repeat">
-        {/* Category cards overlap hero & this background */}
+   
         <div className="relative -mt-16 md:-mt-24 max-w-7xl mx-auto px-4 z-20">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {categories.map((c) => (

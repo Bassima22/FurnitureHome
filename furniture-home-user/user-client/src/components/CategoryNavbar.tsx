@@ -3,8 +3,8 @@ import type { Section } from "../types/Item";
 import CartUserButtons from "./CartUserButtons";
 
 const tabs: { key: Section; label: string }[] = [
-  { key: "item", label: "Category Items" },
-  { key: "gallery", label: "Category Gallery" },
+  { key: "item", label: "Unit Items" },
+  { key: "gallery", label: "Previous Work Gallery" },
 ];
 
 export default function CategoryNavbar() {

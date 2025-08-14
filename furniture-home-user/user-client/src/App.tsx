@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import CategoryPage from "./pages/CategoryPage";
+import Contact from "./pages/contact";
 
 
 export default function App() {
@@ -8,6 +9,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/category/:slug" element={<CategoryPage />} />
+      <Route path="/contact" element={<Contact />} />
     </Routes>
   );
 }
