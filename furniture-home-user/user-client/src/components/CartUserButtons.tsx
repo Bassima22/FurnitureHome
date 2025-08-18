@@ -1,6 +1,4 @@
-
 import { Link } from "react-router-dom";
-
 interface Props {
   cartCount?: number;
   isLoggedIn?: boolean;

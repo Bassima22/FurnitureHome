@@ -17,7 +17,7 @@ export function makeItemsRouter(db: Db) {
       const limit = Math.min(Math.max(parseInt((req.query.limit as string) ?? "12", 10), 1), 60);
 
       const filter: Record<string, any> = {};
-      if (roomRaw) filter.room = normalize(roomRaw);         // "living-room" -> "livingroom"
+      if (roomRaw) filter.room = normalize(roomRaw);         // "living-room" bi7awela la "livingroom"
       if (sectionRaw) filter.section = normalize(sectionRaw); // "items" | "gallery"
 
       const [total, docs] = await Promise.all([

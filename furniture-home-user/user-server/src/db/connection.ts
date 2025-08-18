@@ -1,4 +1,3 @@
-// db/connection.ts (or connection.js if using JS)
 import { MongoClient, Db } from "mongodb";
 
 let client: MongoClient | null = null;
@@ -6,7 +5,6 @@ let db: Db | null = null;
 
 export async function connectDb(): Promise<Db> {
   if (db) {
-    // Reuse existing database connection
     return db;
   }
 
@@ -21,7 +19,7 @@ export async function connectDb(): Promise<Db> {
     await client.connect();
     db = client.db("test-db-001");
 
-    // Optional: ping the server to confirm connection
+    
     await db.command({ ping: 1 });
     console.log("✅ Connected to MongoDB");
 

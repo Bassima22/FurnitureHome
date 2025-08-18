@@ -35,6 +35,7 @@ export default function makeContactsRouter(db:Db){
         message: message.trim(),
         appointment: toBool(appointment),
         createdAt: new Date(),
+        handled: false,
       } as const;
 
       const result = await col.insertOne(doc);
@@ -46,13 +47,5 @@ export default function makeContactsRouter(db:Db){
   });
 
 
-
-
-
-
-
-
-
-    
     return router;
 }

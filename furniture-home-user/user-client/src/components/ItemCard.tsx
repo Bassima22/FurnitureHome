@@ -1,4 +1,3 @@
-// src/components/ItemCard.tsx
 import type { Item } from "../types/Item";
 
 type Props = {
@@ -24,7 +23,7 @@ export default function ItemCard({ item, onAddToCart }: Readonly<Props>) {
 
       <div className="mt-3 flex-1">
         <h3 className="text-sm font-medium text-gray-900 line-clamp-1">{item.title}</h3>
-        {/* Only show price if > 0 (gallery items can be 0) */}
+    
         {item.price > 0 && (
           <p className="mt-1 text-sm text-gray-600">${item.price.toLocaleString()}</p>
         )}

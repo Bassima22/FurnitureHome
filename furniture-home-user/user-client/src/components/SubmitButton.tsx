@@ -9,8 +9,8 @@ type ContactPayload = {
 };
 
 type Props = {
-  apiBase: string;      // e.g. "http://localhost:3000"
-  formId?: string;      // defaults to "contact-form"
+  apiBase: string;      
+  formId?: string;     
   buttonText?: string;
 };
 
@@ -36,7 +36,7 @@ export default function SubmitContactButton({
 
     const fd = new FormData(form);
 
-    // Helpers to safely read strings from FormData
+    // bas ta ne2ra data b tari2a safe
     const getStr = (key: string) => {
       const v = fd.get(key);
       return typeof v === "string" ? v : "";
@@ -46,8 +46,9 @@ export default function SubmitContactButton({
       return typeof v === "string" ? v.trim() : undefined;
     };
 
-    // Build a properly typed payload (no mutation of FormDataEntryValue)
+   
     const payload: ContactPayload = {
+    
       name: getStr("name").trim(),
       email: getStr("email").trim(),
       phone: (() => {
@@ -55,14 +56,14 @@ export default function SubmitContactButton({
         return p && p.length > 0 ? p : undefined;
       })(),
       message: getStr("message").trim(),
-      // Checkbox may be "true" | "on" | undefined depending on your input; normalize to boolean
+      
       appointment: (() => {
         const v = fd.get("appointment");
         return v === "true" || v === "on" || v === "1" ;
       })(),
     };
 
-    // Client-side required checks (optional but nice UX)
+    // to send error deghre iza ken 3ena chi missing
     if (!payload.name)   return setError("Please enter your name.");
     if (!payload.email)  return setError("Please enter your email.");
     if (!payload.message) return setError("Please enter a message.");
@@ -82,7 +83,7 @@ export default function SubmitContactButton({
 
       setSuccess(true);
       form.reset();
-    } catch (err: unknown) {
+    } catch (err:unknown) {
       setError(err.message || "Something went wrong.");
     } finally {
       setLoading(false);
@@ -90,18 +91,21 @@ export default function SubmitContactButton({
   };
 
   return (
-    <div>
+  <div className="py-3 max-w-md mx-auto">
+    <div className="flex justify-end">
       <button
         type="button"
         onClick={handleSubmit}
         disabled={loading}
-        className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60"
+        className="px-4 py-2 rounded bg-orange-400 text-white hover:bg-orange-900 disabled:opacity-60"
       >
         {loading ? "Sending..." : buttonText}
       </button>
-
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-      {success && <p className="mt-2 text-sm text-green-600">Message sent!</p>}
     </div>
-  );
+
+    {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+    {success && <p className="mt-2 text-sm text-green-600">Message sent!</p>}
+  </div>
+);
+
 }

@@ -1,4 +1,4 @@
- import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import CategoryNavbar from "../components/CategoryNavbar";
 import ItemCard from "../components/ItemCard";
@@ -17,7 +17,7 @@ export default function CategoryPage() {
 
   const [page, setPage] = useState(1);
   const limit = 16;
-
+// hay kermel awal ma yeftah yekhdo aal items mch aa saf7a fadye
   useEffect(() => {
     if (!searchParams.get("section")) {
       const usp = new URLSearchParams(searchParams);
@@ -25,11 +25,11 @@ export default function CategoryPage() {
       setSearchParams(usp, { replace: true });
     }
   }, []);
-
+// hay kermel bas en2ol 3a slug jdide masln yraje3ne page 1 mch iza kent 3 b matrah erja3 3 b tene matrah 
   useEffect(() => {
     setPage(1);
   }, [slug, section]);
-
+// the actual go get items betsir bas lama nghayer  [slug, section, page]
   useEffect(() => {
     let cancelled = false;
     async function run() {
@@ -85,6 +85,7 @@ export default function CategoryPage() {
         )}
 
         {loading ? (
+          // farje skeleton iza ken ba3do loading
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
               <div
@@ -93,7 +94,9 @@ export default function CategoryPage() {
               />
             ))}
           </div>
-        ) : (
+        ) : 
+        //actual items iza mch loading
+        (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             {items.map((item) => (
               <div
@@ -106,7 +109,7 @@ export default function CategoryPage() {
           </div>
         )}
 
-        {/* Pagination */}
+        {/* iza ken aktar mn limit by page lli huwe 16 in this case bisir fi previous w next w pages */}
         {total > limit && (
           <div className="mt-10 flex items-center justify-center gap-3">
             <button
