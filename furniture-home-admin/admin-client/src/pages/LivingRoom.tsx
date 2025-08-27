@@ -114,7 +114,7 @@ const Livingroom = () => {
             onSuccess={() => {
               setShowAddGalleryModal(false);
               getAndSetLivingroomGalleryData();
-              window.location.reload();
+             
             }}
           />
         </Modal>

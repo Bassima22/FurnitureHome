@@ -114,7 +114,7 @@ const Bedroom = () => {
             onSuccess={() => {
               setShowAddGalleryModal(false);
               getAndSetBedroomGalleryData();
-              window.location.reload();
+              
             }}
           />
         </Modal>

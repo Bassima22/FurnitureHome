@@ -268,7 +268,7 @@ export default function Home() {
                   className="rounded px-3 py-1.5 bg-emerald-600 text-white hover:bg-emerald-700"
                   onClick={() => markHandled(active._id)}
                 >
-                  Handled
+                  Set to Handled
                 </button>
               )}
             </div>

@@ -12,9 +12,11 @@ type Item = {
   title: string;
   price: number;
   imgURL: string;
+  imgThumbURL?: string;  // add this
   room: string;
   section: string;
 };
+
 const Kitchen = () => {
   const [galleryItems, setGalleryItems] = useState<Item[]>([]);
   const [unitItems, setUnitItems] = useState<Item[]>([]);
@@ -114,7 +116,7 @@ const Kitchen = () => {
             onSuccess={() => {
               setShowAddGalleryModal(false);
               getAndSetKitchenGalleryData();
-              window.location.reload();
+          
             }}
           />
         </Modal>
