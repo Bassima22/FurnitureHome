@@ -6,9 +6,7 @@ type Props = {
 };
 
 export default function ItemCard({ item, onAddToCart }: Readonly<Props>) {
-  const imgSrc = item.imgURL?.startsWith("http")
-    ? item.imgURL
-    : item.imgURL || "/placeholder.jpg";
+   const imgSrc = item.imgThumbURL || item.imgURL || "/placeholder.jpg";
 
   return (
     <div className="group rounded-2xl border bg-white shadow-sm hover:shadow-md transition p-3 flex flex-col">

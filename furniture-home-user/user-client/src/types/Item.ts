@@ -4,7 +4,8 @@ export interface Item {
   _id: string;
   title: string;
   price: number;
-  imgURL: string;
+  imgURL?: string;
+  imgThumbURL?: string;
   room: "kitchen" | "livingroom" | "bedroom";
   section: Section;
 }

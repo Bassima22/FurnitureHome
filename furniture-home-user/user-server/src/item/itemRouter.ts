@@ -7,39 +7,51 @@ export function makeItemsRouter(db: Db) {
   const col = db.collection("items");
 
   
-  router.get("/", async (req, res) => {
-    try {
-      const normalize = (s: string) => s.toLowerCase().replace(/-/g, "");
-      const roomRaw = req.query.room as string | undefined;
-      const sectionRaw = req.query.section as string | undefined;
+router.get("/", async (req, res) => {
+  try {
+    const normalize = (s: string) => s.toLowerCase().replace(/-/g, "");
+    const roomRaw = req.query.room as string | undefined;
+    const sectionRaw = req.query.section as string | undefined;
 
-      const page = Math.max(parseInt((req.query.page as string) ?? "1", 10), 1);
-      const limit = Math.min(Math.max(parseInt((req.query.limit as string) ?? "12", 10), 1), 60);
+    const page = Math.max(parseInt((req.query.page as string) ?? "1", 10), 1);
+    const limit = Math.min(Math.max(parseInt((req.query.limit as string) ?? "12", 10), 1), 60);
+    const skip = (page - 1) * limit;
 
-      const filter: Record<string, any> = {};
-      if (roomRaw) filter.room = normalize(roomRaw);         // "living-room" bi7awela la "livingroom"
-      if (sectionRaw) filter.section = normalize(sectionRaw); // "items" | "gallery"
+    const filter: Record<string, any> = {};
+    if (roomRaw) filter.room = normalize(roomRaw);          // e.g. "living-room" -> "livingroom"
+    if (sectionRaw) filter.section = normalize(sectionRaw);  // "item" | "gallery"
 
-      const [total, docs] = await Promise.all([
-        col.countDocuments(filter),
-        col.find(filter).skip((page - 1) * limit).limit(limit).toArray(),
-      ]);
+    const [total, docs] = await Promise.all([
+      col.countDocuments(filter),
+      col.find(filter)
+        .project({
+          title: 1,
+          price: 1,
+          room: 1,
+          section: 1,
+          imgThumbURL: 1,     // 👈 send only the thumbnail in list responses
+        })
+        .skip(skip)
+        .limit(limit)
+        .toArray(),
+    ]);
 
-      const items = docs.map(d => ({
-        _id: String(d._id),
-        title: d.title,
-        price: d.price,
-        imgURL: d.imgURL,
-        room: d.room,
-        section: d.section,
-      }));
+    const items = docs.map(d => ({
+      _id: String(d._id),
+      title: d.title,
+      price: d.price,
+      room: d.room,
+      section: d.section,
+      imgThumbURL: d.imgThumbURL ?? "", // older docs may not have it
+    }));
 
-      res.json({ items, page, limit, total, hasMore: page * limit < total });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Failed to fetch items" });
-    }
-  });
+    res.json({ items, page, limit, total, hasMore: page * limit < total });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch items" });
+  }
+});
+
 
   
   router.get("/:room/:section", async (req, res) => {

@@ -21,7 +21,7 @@ export default function CategoryPage() {
   useEffect(() => {
     if (!searchParams.get("section")) {
       const usp = new URLSearchParams(searchParams);
-      usp.set("section", "items");
+      usp.set("section", "item");
       setSearchParams(usp, { replace: true });
     }
   }, []);
