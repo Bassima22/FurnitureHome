@@ -3,9 +3,9 @@ import Navbar from "../components/Navbar";
 import CategoryCard from "../components/CategoryCard";
 
 const categories = [
-  { title: "kitchen", slug: "kitchen" },
-  { title: "living room", slug: "living-room" },
-  { title: "bedroom", slug: "bedroom" },
+  { title: "kitchen", slug: "kitchen" , image: "/kitchen.jpg"},
+  { title: "living room", slug: "living-room", image: "/livingroom.jpg" },
+  { title: "bedroom", slug: "bedroom" , image:"/bedroom.jpg"},
   { title: "contact us", slug: "contact-us" },
 ];
 

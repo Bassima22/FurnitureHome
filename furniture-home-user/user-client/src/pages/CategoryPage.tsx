@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import CategoryNavbar from "../components/CategoryNavbar";
 import ItemCard from "../components/ItemCard";
-import { fetchItems } from "../lib/api";
+import { fetchItemById, fetchItems } from "../lib/api";
 import type { Item, Section } from "../types/Item";
+import ImageModal from "../components/ImageModal";
 
 export default function CategoryPage() {
   const { slug = "kitchen" } = useParams<{ slug: string }>();
@@ -15,9 +16,34 @@ export default function CategoryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  //kermel modal l image
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalImg, setModalImg] = useState<string | undefined>();
+  const [modalTitle, setModalTitle] = useState<string | undefined>();
+  const [modalLoading, setModalLoading] = useState(false);
+
+  async function openImage(
+    itemId: string,
+    title: string,
+    fallbackThumb?: string
+  ) {
+    setModalTitle(title);
+    setModalImg(fallbackThumb); // show thumb immediately
+    setModalLoading(true);
+    setModalOpen(true);
+    try {
+      const full = await fetchItemById(itemId); // includes imgURL
+      setModalImg(full.imgURL || full.imgThumbURL || "/placeholder.jpg");
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setModalLoading(false);
+    }
+  }
+
   const [page, setPage] = useState(1);
   const limit = 16;
-// hay kermel awal ma yeftah yekhdo aal items mch aa saf7a fadye
+  // hay kermel awal ma yeftah yekhdo aal items mch aa saf7a fadye
   useEffect(() => {
     if (!searchParams.get("section")) {
       const usp = new URLSearchParams(searchParams);
@@ -25,11 +51,11 @@ export default function CategoryPage() {
       setSearchParams(usp, { replace: true });
     }
   }, []);
-// hay kermel bas en2ol 3a slug jdide masln yraje3ne page 1 mch iza kent 3 b matrah erja3 3 b tene matrah 
+  // hay kermel bas en2ol 3a slug jdide masln yraje3ne page 1 mch iza kent 3 b matrah erja3 3 b tene matrah
   useEffect(() => {
     setPage(1);
   }, [slug, section]);
-// the actual go get items betsir bas lama nghayer  [slug, section, page]
+  // the actual go get items betsir bas lama nghayer  [slug, section, page]
   useEffect(() => {
     let cancelled = false;
     async function run() {
@@ -94,17 +120,19 @@ export default function CategoryPage() {
               />
             ))}
           </div>
-        ) : 
-        //actual items iza mch loading
-        (
+        ) : (
+          //actual items iza mch loading
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             {items.map((item) => (
-              <div
+              <button
                 key={item._id}
-                className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
+                onClick={() =>
+                  openImage(item._id, item.title, item.imgThumbURL)
+                }
+                className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden text-left"
               >
                 <ItemCard item={item} />
-              </div>
+              </button>
             ))}
           </div>
         )}
@@ -131,6 +159,13 @@ export default function CategoryPage() {
             </button>
           </div>
         )}
+        <ImageModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          src={modalImg}
+          title={modalTitle}
+          loading={modalLoading}
+        />
       </main>
     </div>
   );

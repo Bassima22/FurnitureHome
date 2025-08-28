@@ -22,3 +22,9 @@ export async function fetchItems(params: {
   if (!res.ok) throw new Error(`Failed to fetch items: ${res.status}`);
   return res.json() as Promise<Paginated<Item>>;
 }
+
+export async function fetchItemById(id: string): Promise<Item> {
+  const res = await fetch(`${API}/items/by-id/${id}`);
+  if (!res.ok) throw new Error(`Failed to fetch item (${res.status})`);
+  return res.json();
+}
