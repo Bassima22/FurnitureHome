@@ -1,6 +1,6 @@
 import type { Item, Paginated, Section } from "../types/Item";
 
-const API = import.meta.env.VITE_API_URL ?? "http://localhost:5050/api";
+const API = import.meta.env.VITE_API_URL ?? "http://localhost:5051/api";
 const normalize = (s: string) => s.toLowerCase().replace(/-/g, "");
 
 export async function fetchItems(params: {

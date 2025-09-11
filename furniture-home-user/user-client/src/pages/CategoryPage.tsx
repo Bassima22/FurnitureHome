@@ -1,10 +1,15 @@
+// src/pages/CategoryPage.tsx
 import { useEffect, useMemo, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams, useLocation, useNavigate } from "react-router-dom";
 import CategoryNavbar from "../components/CategoryNavbar";
 import ItemCard from "../components/ItemCard";
 import { fetchItemById, fetchItems } from "../lib/api";
 import type { Item, Section } from "../types/Item";
 import ImageModal from "../components/ImageModal";
+
+// NEW:
+import { useAuth } from "../auth/AuthProvider";
+import { useCart } from "../cart/CartProvider";
 
 export default function CategoryPage() {
   const { slug = "kitchen" } = useParams<{ slug: string }>();
@@ -16,23 +21,25 @@ export default function CategoryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  //kermel modal l image
+  // modal state ...
   const [modalOpen, setModalOpen] = useState(false);
   const [modalImg, setModalImg] = useState<string | undefined>();
   const [modalTitle, setModalTitle] = useState<string | undefined>();
   const [modalLoading, setModalLoading] = useState(false);
 
-  async function openImage(
-    itemId: string,
-    title: string,
-    fallbackThumb?: string
-  ) {
+  // NEW:
+  const { user } = useAuth();
+  const { add } = useCart();
+  const nav = useNavigate();
+  const loc = useLocation();
+
+  async function openImage(itemId: string, title: string, fallbackThumb?: string) {
     setModalTitle(title);
-    setModalImg(fallbackThumb); // show thumb immediately
+    setModalImg(fallbackThumb);
     setModalLoading(true);
     setModalOpen(true);
     try {
-      const full = await fetchItemById(itemId); // includes imgURL
+      const full = await fetchItemById(itemId);
       setModalImg(full.imgURL || full.imgThumbURL || "/placeholder.jpg");
     } catch (e) {
       console.error(e);
@@ -41,9 +48,24 @@ export default function CategoryPage() {
     }
   }
 
+  // NEW: add-to-cart handler
+  async function handleAddToCart(item: Item) {
+    if (!user) {
+      nav("/login", { state: { from: loc } });
+      return;
+    }
+    try {
+      await add(String(item._id), 1);
+      // optional: toast/snackbar success
+    } catch (e) {
+      console.error("add to cart failed", e);
+      // optional: toast error
+    }
+  }
+
   const [page, setPage] = useState(1);
   const limit = 16;
-  // hay kermel awal ma yeftah yekhdo aal items mch aa saf7a fadye
+
   useEffect(() => {
     if (!searchParams.get("section")) {
       const usp = new URLSearchParams(searchParams);
@@ -51,11 +73,11 @@ export default function CategoryPage() {
       setSearchParams(usp, { replace: true });
     }
   }, []);
-  // hay kermel bas en2ol 3a slug jdide masln yraje3ne page 1 mch iza kent 3 b matrah erja3 3 b tene matrah
+
   useEffect(() => {
     setPage(1);
   }, [slug, section]);
-  // the actual go get items betsir bas lama nghayer  [slug, section, page]
+
   useEffect(() => {
     let cancelled = false;
     async function run() {
@@ -75,22 +97,14 @@ export default function CategoryPage() {
       }
     }
     run();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [slug, section, page]);
 
   const title = useMemo(() => slug.replace(/-/g, " "), [slug]);
 
   return (
-    <div
-      className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-gray-100"
-      style={{
-        backgroundImage: "url('/pattern.svg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
+    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-gray-100"
+         style={{ backgroundImage: "url('/pattern.svg')", backgroundSize: "cover", backgroundPosition: "center" }}>
       <CategoryNavbar />
 
       {/* HEADER */}
@@ -111,33 +125,26 @@ export default function CategoryPage() {
         )}
 
         {loading ? (
-          // farje skeleton iza ken ba3do loading
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-56 rounded-2xl bg-gray-100 animate-pulse"
-              />
+              <div key={i} className="h-56 rounded-2xl bg-gray-100 animate-pulse" />
             ))}
           </div>
         ) : (
-          //actual items iza mch loading
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             {items.map((item) => (
-              <button
+              // CHANGED: div instead of <button> to avoid nested buttons
+              <div
                 key={item._id}
-                onClick={() =>
-                  openImage(item._id, item.title, item.imgThumbURL)
-                }
-                className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden text-left"
+                onClick={() => openImage(item._id, item.title, item.imgThumbURL)}
+                className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden text-left cursor-pointer"
               >
-                <ItemCard item={item} />
-              </button>
+                <ItemCard item={item} onAddToCart={handleAddToCart} />
+              </div>
             ))}
           </div>
         )}
 
-        {/* iza ken aktar mn limit by page lli huwe 16 in this case bisir fi previous w next w pages */}
         {total > limit && (
           <div className="mt-10 flex items-center justify-center gap-3">
             <button
@@ -159,6 +166,7 @@ export default function CategoryPage() {
             </button>
           </div>
         )}
+
         <ImageModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
