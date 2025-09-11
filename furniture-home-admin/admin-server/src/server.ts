@@ -5,6 +5,7 @@ import express from "express";
 import { itemsRouter } from "./item/itemsRouter.js";
 import { ContactsRouter } from "./item/contactRouter.js";
 import cors from "cors";
+import { OrdersRouter } from "./item/orderRouter.js";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ async function run() {
   app.use("/api/auth", authRoutes);
   app.use("/items", itemsRouter);
   app.use("/api/home", ContactsRouter);
+  app.use("/api/orders",OrdersRouter);
 
   app.listen(PORT, () => {
     console.log(`API running on port ${PORT}`);

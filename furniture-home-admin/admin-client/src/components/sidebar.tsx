@@ -20,6 +20,7 @@ const Sidebar = ({ className = "" }: { className?: string }) => {
           <Link to="/kitchen" className="hover:underline">Kitchen</Link>
           <Link to="/bedroom" className="hover:underline">Bedroom</Link>
           <Link to="/livingroom" className="hover:underline">Living Room</Link>
+          <Link to="/orders" className="hover:underline">Orders</Link>
         </nav>
       </div>
 
