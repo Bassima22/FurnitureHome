@@ -6,7 +6,7 @@ const categories = [
   { title: "kitchen", slug: "kitchen" , image: "/kitchen.jpg"},
   { title: "living room", slug: "living-room", image: "/livingroom.jpg" },
   { title: "bedroom", slug: "bedroom" , image:"/bedroom.jpg"},
-  { title: "contact us", slug: "contact-us" },
+  
 ];
 
 export default function Home() {
@@ -27,7 +27,7 @@ export default function Home() {
       <div className="relative flex-1 bg-[url('/about.jpg')] bg-cover bg-center bg-no-repeat">
    
         <div className="relative -mt-16 md:-mt-24 max-w-7xl mx-auto px-4 z-20">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {categories.map((c) => (
               <CategoryCard key={c.slug} {...c} />
             ))}

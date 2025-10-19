@@ -14,6 +14,7 @@ export type AuthUser = {
   id: string;
   email: string;
   name?: string;
+  displayName?: string;
   role: "user" | "admin";
 };
 

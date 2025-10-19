@@ -83,7 +83,7 @@ export default function SubmitContactButton({
 
       setSuccess(true);
       form.reset();
-    } catch (err:unknown) {
+    } catch (err:any) {
       setError(err.message || "Something went wrong.");
     } finally {
       setLoading(false);
